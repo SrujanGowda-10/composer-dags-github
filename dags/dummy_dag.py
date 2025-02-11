@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # Define a simple Python function
 def print_hello():
-    print("Hello from Airflow!")
+    print("Hello from Airflow with GCP!")
 
 # Default arguments for the DAG
 default_args = {
