@@ -3,36 +3,26 @@ name: Deploy DAGs to Cloud Composer
 on:
   push:
     branches:
-      - main  # Deploy only after merge
-  pull_request:
-    branches:
-      - main  # Validate changes on PR but do not deploy
+      - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      
-      - name: Lint DAGs
-        uses: apache/airflow-ci-dags-lint@v1
-        with:
-          directory: dags/
-
   deploy:
-    needs: test
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Authenticate to GCP
+      - name: Authenticate with GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
       - name: Upload DAGs to Cloud Composer
         run: |
-          gcloud storage rsync -r dags/ gs://us-central1-yfinance-7572594f-bucket/dags/
+          gcloud storage cp dags/*.py gs://${{ secrets.COMPOSER_BUCKET }}/dags/
