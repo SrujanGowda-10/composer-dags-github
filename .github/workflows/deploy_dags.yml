@@ -25,4 +25,4 @@ jobs:
 
       - name: Upload DAGs to Cloud Composer
         run: |
-          gcloud storage cp dags/*.py gs://${{ secrets.COMPOSER_BUCKET }}/dags/
+          gcloud storage cp dags/*.py gs://us-central1-yfinance-7572594f-bucket/dags/
